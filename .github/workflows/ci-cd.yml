@@ -1,0 +1,87 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root123
+          MYSQL_DATABASE: horoscope_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install Backend Dependencies
+      working-directory: ./backend
+      run: npm ci
+    
+    - name: Run Linter
+      working-directory: ./backend
+      run: npm run lint
+    
+    - name: Run Tests
+      working-directory: ./backend
+      run: npm test
+      env:
+        DB_HOST: 127.0.0.1
+        DB_USER: root
+        DB_PASSWORD: root123
+        DB_NAME: horoscope_test
+        NODE_ENV: test
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install Frontend Dependencies
+      working-directory: ./frontend
+      run: npm ci
+    
+    - name: Run Linter
+      working-directory: ./frontend
+      run: npm run lint
+    
+    - name: Build Frontend
+      working-directory: ./frontend
+      run: npm run build
+
+  deploy:
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Render
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      run: |
+        curl -X POST \
+          https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }} \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json"
