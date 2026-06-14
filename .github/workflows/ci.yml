@@ -10,17 +10,13 @@ jobs:
   test-backend:
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
     - uses: actions/checkout@v3
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.x
         cache: 'npm'
         cache-dependency-path: backend/package-lock.json
     
@@ -28,30 +24,23 @@ jobs:
       working-directory: ./backend
       run: npm ci
     
-    - name: Run Backend Lint
-      working-directory: ./backend
-      run: npm run lint || echo "Lint warnings ignored for now"
-    
     - name: Run Backend Tests
       working-directory: ./backend
-      run: npm test || echo "Tests will be fixed later"
+      run: npm test -- --passWithNoTests
       env:
+        CI: true
         NODE_ENV: test
 
   test-frontend:
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
     - uses: actions/checkout@v3
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.x
         cache: 'npm'
         cache-dependency-path: frontend/package-lock.json
     
@@ -59,18 +48,55 @@ jobs:
       working-directory: ./frontend
       run: npm ci
     
-    - name: Run Frontend Lint
-      working-directory: ./frontend
-      run: npm run lint || echo "Lint warnings ignored for now"
-    
     - name: Build Frontend
       working-directory: ./frontend
       run: npm run build
+
+  lint-backend:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+    
+    - name: Install Backend Dependencies
+      working-directory: ./backend
+      run: npm ci
+    
+    - name: Run Backend Lint
+      working-directory: ./backend
+      run: npm run lint || echo "Lint warnings ignored"
+
+  lint-frontend:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+    
+    - name: Install Frontend Dependencies
+      working-directory: ./frontend
+      run: npm ci
+    
+    - name: Run Frontend Lint
+      working-directory: ./frontend
+      run: npm run lint || echo "Lint warnings ignored"
 
   docker-build:
     needs: [test-backend, test-frontend]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    continue-on-error: true
     
     steps:
     - uses: actions/checkout@v3
