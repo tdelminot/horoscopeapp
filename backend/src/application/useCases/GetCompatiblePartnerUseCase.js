@@ -3,16 +3,20 @@
     this.userRepository = userRepository;
   }
 
-  async execute(sign) {
-    // Si sign est un objet user, extraire le signe
+  execute(sign) {
+    // Normaliser le signe
     let userSign = sign;
     if (typeof sign === 'object' && sign.sign) {
       userSign = sign.sign;
     }
     
+    // Capitaliser la première lettre
+    if (userSign && typeof userSign === 'string') {
+      userSign = userSign.charAt(0).toUpperCase() + userSign.slice(1).toLowerCase();
+    }
+    
     console.log('Calcul compatibilité pour signe:', userSign);
     
-    // Base de données de compatibilité complète
     const compatibilityDB = {
       'Bélier': { 
         compatible: ['Lion', 'Sagittaire', 'Gémeaux'], 
@@ -88,19 +92,19 @@
       }
     };
 
-    // Normaliser le signe (première lettre majuscule)
-    const normalizedSign = userSign.charAt(0).toUpperCase() + userSign.slice(1).toLowerCase();
-    const match = compatibilityDB[normalizedSign] || compatibilityDB['Bélier'];
+    // Chercher la compatibilité
+    let match = compatibilityDB[userSign];
+    
+    // Si non trouvé, utiliser Bélier par défaut
+    if (!match) {
+      match = compatibilityDB['Bélier'];
+    }
     
     const result = {
-      sign: normalizedSign,
+      sign: userSign || 'Bélier',
       compatibleSigns: match.compatible,
       incompatibleSigns: match.incompatible,
-      advice: `✨ En amour, les astres révèlent une magnifique harmonie entre ${normalizedSign} et ${match.compatible[0]} ✨
-
-Les étoiles indiquent que l'équilibre parfait se trouve dans la complémentarité. Votre partenaire idéal saura apprécier votre nature profonde et vous accompagner dans votre cheminement.
-
-💫 Conseil des astres : Laissez-vous guider par votre intuition, elle ne vous trompe jamais.`,
+      advice: `✨ En amour, les astres révèlent une magnifique harmonie entre ${userSign || 'Bélier'} et ${match.compatible[0]} ✨\n\nLes étoiles indiquent que l'équilibre parfait se trouve dans la complémentarité. Votre partenaire idéal saura apprécier votre nature profonde et vous accompagner dans votre cheminement.\n\n💫 Conseil des astres : Laissez-vous guider par votre intuition, elle ne vous trompe jamais.`,
       idealPartner: {
         traits: match.traits,
         loveCompatibility: match.loveCompatibility

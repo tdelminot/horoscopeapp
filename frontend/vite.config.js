@@ -7,8 +7,25 @@ export default defineConfig({
     port: 3001,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://backend:3000',
         changeOrigin: true
+      }
+    }
+  },
+  css: {
+    postcss: {
+      plugins: []
+    }
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'mobx', 'mobx-react-lite']
+        }
       }
     }
   }

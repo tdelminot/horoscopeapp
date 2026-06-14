@@ -1,13 +1,10 @@
-FROM node:18-alpine as buildWORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
+﻿# Frontend Dockerfile - Utilise le build existant
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
+
+# Copier les fichiers buildés localement
+COPY dist /usr/share/nginx/html
+
+# Copier la configuration Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

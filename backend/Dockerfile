@@ -1,15 +1,17 @@
-FROM node:18-alpine as buildWORKDIR /app
+﻿# Backend Dockerfile
+FROM node:18-alpine
 
+WORKDIR /app
+
+# Copier les fichiers de dépendances
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --only=production
 
+# Copier le reste du code
 COPY . .
-RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Exposer le port
+EXPOSE 3000
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Démarrer l'application
+CMD ["node", "src/presentation/server.js"]

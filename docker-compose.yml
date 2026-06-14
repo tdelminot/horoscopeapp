@@ -1,0 +1,58 @@
+﻿services:
+  mysql:
+    image: mysql:8
+    container_name: horoscope-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-horoscope_db}
+      MYSQL_USER: ${MYSQL_USER:-horoscope_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-horoscope_pass}
+    ports:
+      - ${MYSQL_PASSWORD:-horoscope_pass}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - horoscope-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: horoscope-backend
+    restart: always
+    environment:
+      DB_HOST: mysql
+      DB_USER: ${MYSQL_USER:-root}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-root123}
+      DB_NAME: ${MYSQL_DATABASE:-horoscope_db}
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - horoscope-network
+
+  frontend:
+    build: ./frontend
+    container_name: horoscope-frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      - backend
+    networks:
+      - horoscope-network
+
+volumes:
+  mysql_data:
+
+networks:
+  horoscope-network:
+    driver: bridge
