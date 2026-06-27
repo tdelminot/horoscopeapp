@@ -1,3 +1,8 @@
+[![GitHub version](https://img.shields.io/github/v/release/tdelminot/horoscopeapp)](https://github.com/tdelminot/horoscopeapp)
+[![GitHub license](https://img.shields.io/github/license/tdelminot/horoscopeapp)](https://github.com/tdelminot/horoscopeapp)
+[![Docker](https://img.shields.io/badge/docker-ready-blue)](https://www.docker.com/)
+[![Node.js](https://img.shields.io/badge/node.js-18.x-green)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/react-18.x-blue)](https://reactjs.org/)
 #  Horoscope App - Guide Astrologique Complet
 
 Application fullstack d'horoscope avec React, Node.js, MySQL.
@@ -15,7 +20,7 @@ Application fullstack d'horoscope avec React, Node.js, MySQL.
 
 ```bash
 # Cloner le projet
-git clone https://github.com/tdelminot@gmail.com/horoscope-app.git
+git clone https://github.com/tdelminot/horoscopeapp.git
 cd horoscope-app
 
 # Installer les dépendances
