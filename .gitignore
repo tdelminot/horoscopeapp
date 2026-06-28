@@ -1,4 +1,4 @@
-# Dépendances
+# Dï¿½pendances
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -21,6 +21,14 @@ out/
 # Logs
 logs/
 *.log
+combined.log
+error.log
+exceptions.log
+backend/logs/
+backend/combined.log
+backend/error.log
+
+
 
 # OS
 .DS_Store
@@ -41,11 +49,11 @@ css_backup/
 *.tmp
 .cache/
 
-# Backend spécifique
+# Backend spï¿½cifique
 backend/coverage/
 backend/.nyc_output/
 
-# Frontend spécifique
+# Frontend spï¿½cifique
 frontend/dist/
 frontend/build/
 frontend/.vite/
@@ -53,3 +61,8 @@ frontend/.vite/
 # Secrets
 *.key
 *.secret
+
+
+
+
+
