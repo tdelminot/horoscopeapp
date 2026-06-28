@@ -1,17 +1,25 @@
-﻿const express = require('express');
+﻿// backend/src/presentation/routes/horoscopeRoutes.js
+const express = require('express');
+const antiScraping = require('../middlewares/antiScraping');
 
 const setupHoroscopeRoutes = (controller) => {
-  const router = express.Router();
+    const router = express.Router();
 
-  router.get('/history/:userId', (req, res, next) => 
-    controller.getHoroscopeHistory(req, res, next)
-  );
-  
-  router.get('/:userId/:date', (req, res, next) => 
-    controller.getHoroscopeByDate(req, res, next)
-  );
-  
-  return router;
+    // GET - Historique des horoscopes
+    router.get(
+        '/history/:userId',
+        antiScraping.protectSensitive,
+        (req, res, next) => controller.getHoroscopeHistory(req, res, next)
+    );
+
+    // GET - Horoscope par date
+    router.get(
+        '/:userId/:date',
+        antiScraping.protectSensitive,
+        (req, res, next) => controller.getHoroscopeByDate(req, res, next)
+    );
+
+    return router;
 };
 
 module.exports = setupHoroscopeRoutes;

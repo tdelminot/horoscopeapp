@@ -1,0 +1,23 @@
+{
+  "name": "horoscope-app",
+  "version": "1.1.0",
+  "description": "Full-stack horoscope application with React and Node.js",
+  "private": true,
+  "scripts": {
+    "dev": "node start.js",
+    "start": "node start.js",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "test": "cd backend && npm test",
+    "build": "cd frontend && npm run build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "keywords": ["horoscope", "react", "nodejs", "express", "mysql"],
+  "author": "Tafara Delminot",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
