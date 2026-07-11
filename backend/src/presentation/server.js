@@ -1,4 +1,4 @@
-// backend/src/presentation/server.js
+ 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -21,14 +21,14 @@ const antiScraping = require('./middlewares/antiScraping');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ======================================
-// 1. LOGGING (en premier pour tout logger)
-// ======================================
+ 
+//  LOGGING (en premier pour tout logger)
+ 
 app.use(morganLogger);
 
-// ======================================
-// 2. SÉCURITÉ (middlewares globaux)
-// ======================================
+ 
+//  SÉCURITÉ (middlewares globaux)
+ 
 
 // Helmet - Sécurise les en-têtes HTTP
 app.use(helmet());
@@ -76,10 +76,9 @@ app.use(antiScraping.protectAll);
 app.use('/api/users/horoscope', antiScraping.protectSensitive);
 app.use('/api/users/compatible', antiScraping.protectSensitive);
 app.use('/api/horoscopes', antiScraping.protectSensitive);
-
-// ======================================
-// 3. ROUTES
-// ======================================
+ 
+//  ROUTES
+ 
 
 let userRepository;
 let horoscopeRepository;
